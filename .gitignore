@@ -1,0 +1,26 @@
+# Only reconstructed source and project documentation belong in this repository.
+/*
+!/.gitignore
+!/.gitattributes
+!/README.md
+!/RELEASE_NOTES.md
+!/REVERSE_ENGINEERING.md
+!/requirements*.txt
+!/youyu_reimplementation.py
+!/ai_image.py
+!/canvas_selector.py
+!/drawing_core.py
+!/image_processing.py
+!/runtime_paths.py
+!/extract_archive.py
+!/start_chenghua.cmd
+!/start_youyu.cmd
+!/scripts/
+!/tests/
+!/analysis_tools/
+
+__pycache__/
+*.py[cod]
+.env
+.env.*
+*.log
