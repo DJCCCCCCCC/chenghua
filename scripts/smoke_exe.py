@@ -13,7 +13,7 @@ from PIL import ImageGrab, ImageStat
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(description="Check a built application's window and clean shutdown.")
     parser.add_argument("executable", type=Path)
     arguments = parser.parse_args()
     executable = arguments.executable.resolve(strict=True)

@@ -15,7 +15,7 @@ from canvas_selector import CanvasSelector
 from drawing_core import DrawingConfig, WindowsMouseController, desktop_bounds, interpolate, map_stroke
 from image_processing import render_strokes
 from test_drawing import RecordingBackend
-from youyu_reimplementation import App
+from chenghua_app import App
 
 
 OUTPUT = Path(__file__).resolve().parents[1] / "test_artifacts"
@@ -69,7 +69,7 @@ class GuiTests(unittest.TestCase):
 
     def setUp(self):
         self.errors = []
-        self.error_patcher = mock.patch("youyu_reimplementation.messagebox.showerror",
+        self.error_patcher = mock.patch("chenghua_app.messagebox.showerror",
                                        side_effect=lambda title, text, **kw: self.errors.append((title, text)))
         self.error_patcher.start()
         self.addCleanup(self.error_patcher.stop)
@@ -297,7 +297,7 @@ class GuiTests(unittest.TestCase):
         self.app._ai()
         self.app.base_url.set("https://proxy.example/v1")
         self.app.api_key.set("test-key")
-        with mock.patch("youyu_reimplementation.list_models",
+        with mock.patch("chenghua_app.list_models",
                         return_value=("OpenAI", ["image-test", "text-test"])):
             self.app._fetch_models()
             self.pump_until(lambda: not self.app._processing)
@@ -310,7 +310,7 @@ class GuiTests(unittest.TestCase):
 
     def test_models_are_automatically_fetched_after_credentials_change(self):
         self.app._ai()
-        with mock.patch("youyu_reimplementation.list_models",
+        with mock.patch("chenghua_app.list_models",
                         return_value=("OpenAI", ["image-auto"])) as listing:
             self.app.base_url.set("https://proxy.example/v1")
             self.app.api_key.set("test-key")
@@ -321,15 +321,15 @@ class GuiTests(unittest.TestCase):
     def test_ai_result_is_saved_as_png_and_loaded(self):
         self.app._ai()
         self.app.api_key.set("test-key")
-        with mock.patch("youyu_reimplementation.list_models",
+        with mock.patch("chenghua_app.list_models",
                         return_value=("OpenAI", ["image-test"])):
             self.app._fetch_models()
             self.pump_until(lambda: not self.app._processing)
         self.app.prompt.set("a house")
-        with mock.patch("youyu_reimplementation.generate_image",
+        with mock.patch("chenghua_app.generate_image",
                         return_value=("OpenAI", self.fixture.read_bytes())), \
                 tempfile.TemporaryDirectory() as directory:
-            with mock.patch("youyu_reimplementation.__file__", str(Path(directory) / "app.py")):
+            with mock.patch("chenghua_app.__file__", str(Path(directory) / "app.py")):
                 self.app._generate_ai()
                 self.pump_until(lambda: not self.app._processing)
                 self.assertEqual(self.app.processor.size, (640, 480))
@@ -339,14 +339,14 @@ class GuiTests(unittest.TestCase):
     def test_canvas_dialog_does_not_commit_rejected_area(self):
         self.process_image()
         selector = mock.Mock(result=(20, 30, 300, 200))
-        with mock.patch("youyu_reimplementation.CanvasSelector", return_value=selector), \
+        with mock.patch("chenghua_app.CanvasSelector", return_value=selector), \
                 mock.patch.object(self.app, "wait_window"), \
-                mock.patch("youyu_reimplementation.messagebox.askyesno", return_value=False):
+                mock.patch("chenghua_app.messagebox.askyesno", return_value=False):
             self.app._open_selector()
         self.assertEqual(tuple(v.get() for v in self.app.area_vars), (0, 0, 0, 0))
-        with mock.patch("youyu_reimplementation.CanvasSelector", return_value=selector), \
+        with mock.patch("chenghua_app.CanvasSelector", return_value=selector), \
                 mock.patch.object(self.app, "wait_window"), \
-                mock.patch("youyu_reimplementation.messagebox.askyesno", return_value=True):
+                mock.patch("chenghua_app.messagebox.askyesno", return_value=True):
             self.app._open_selector()
         self.assertEqual(tuple(v.get() for v in self.app.area_vars), selector.result)
 
@@ -436,7 +436,7 @@ class GuiTests(unittest.TestCase):
         self.process_image()
         with tempfile.TemporaryDirectory() as temp:
             target = Path(temp) / "strokes.json"
-            with mock.patch("youyu_reimplementation.filedialog.asksaveasfilename", return_value=str(target)):
+            with mock.patch("chenghua_app.filedialog.asksaveasfilename", return_value=str(target)):
                 self.app._export_strokes()
             saved = json.loads(target.read_text(encoding="utf-8"))
             self.assertEqual(saved["image_size"], [640, 480])

@@ -105,7 +105,7 @@ def main():
         "--workpath", str(BUILD / "pyinstaller"), "--specpath", str(BUILD),
         "--add-data", f"{notices};.", "--exclude-module", "pytest",
         "--exclude-module", "unittest", "--exclude-module", "tkinter.test",
-        str(ROOT / "youyu_reimplementation.py"),
+        str(ROOT / "chenghua_app.py"),
     ], check=True, cwd=ROOT)
     executable = DIST / f"{STEM}.exe"
     shutil.copy2(DIST / "Chenghua.exe", executable)
